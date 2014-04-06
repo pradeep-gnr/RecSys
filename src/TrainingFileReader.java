@@ -35,9 +35,8 @@ public class TrainingFileReader {
 		}
 	}
 	
-	private String ipFile;
-	
-	public Matrix userItemMatrix;
+	private String ipFile;		//The input File	
+	public Matrix userItemMatrix; // The user Item matrix 
 	
 	public TrainingFileReader(String fileName)
 	{
@@ -157,6 +156,12 @@ public class TrainingFileReader {
 					// Set the corresponding user-item entry in the matrix					
 					userItemMatrix.set(user,item,rating);					
 				}
+				
+				/*
+				 * Perform imputation. To handle missing values and zero computation in the dot Product.
+				 */
+				userItemMatrix = MatrixHelper.getSubtractedMatrix(userItemMatrix, 3);
+				
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
