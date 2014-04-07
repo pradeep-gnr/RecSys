@@ -173,8 +173,7 @@ public class TrainingFileReader {
 			System.out.println("File not found");
 			e.printStackTrace();
 			
-		}		
-		
+		}	
 		
 	}
 	
