@@ -95,12 +95,14 @@ public class UserSimilarityMatrixGenerator {
 		System.out.println("Built a Matrix");
 		double[][] array = {{1,2,3},{-1,-2,-3},{8,11,13}};
 		Matrix A = new Matrix(array);
-		UserSimilarityMatrixGenerator test = new UserSimilarityMatrixGenerator(r.userItemMatrix);			
-		//UserSimilarityMatrixGenerator test = new UserSimilarityMatrixGenerator(A);
+		A = MatrixHelper.getSubtractedMatrix(A, 3);
+		//UserSimilarityMatrixGenerator test = new UserSimilarityMatrixGenerator(r.userItemMatrix);			
+		UserSimilarityMatrixGenerator test = new UserSimilarityMatrixGenerator(A);
 		test.generateUserSimilarityMatrix("cos");
 		
-		//MatrixHelper.printMatrix(test.userSimMatrix);
-		MatrixHelper.writeMatrixToFile(test.userSimMatrix, "/home/pradeep/matrix.ser");
+		MatrixHelper.printMatrix(A);
+		MatrixHelper.printMatrix(test.userSimMatrix);
+		//MatrixHelper.writeMatrixToFile(test.userSimMatrix, "/home/pradeep/matrix.ser");
 		System.out.println("Written to File");
 		
 	}

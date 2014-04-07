@@ -9,60 +9,21 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.TreeMap;
+import java.util.LinkedHashMap;
 public class MemoryBasedExperimenter {
 	/*
 	 * Experiments for memory based collaborative Filtering 
-	 */
+	 */	
 	
-	public String ipFile;
-	public String opFile;
-	public static Matrix userSimMatrix; 
-	public static Matrix userItemMatrix;
-	
-	
-	public MemoryBasedExperimenter(String ipFile, String opFile, String userSimMatrixFile)
+	public MemoryBasedExperimenter()
 	{
 		/*
 		 * Initialize Constructor
 		 */
-		this.ipFile =ipFile;
-		this.opFile = opFile;
-		
-		readUserSimMatrix(userSimMatrixFile); // Read and intitiaize the user Similarity matrix		
 		
 	}
 	
-	public void readUserSimMatrix(String userSimMatrixFile)
-	{
-		/*
-		 * Read a the pre-computed similarity matrix from file
-		 */
-	    FileInputStream fin;
-		try {
-			fin = new FileInputStream(userSimMatrixFile);
-			 ObjectInputStream ois;
-			try {
-				ois = new ObjectInputStream(fin);
-				 try {
-					Matrix userSimMatrix  = (Matrix) ois.readObject();
-					this.userSimMatrix=  userSimMatrix;
-				} catch (ClassNotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				   ois.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			  
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}		
-	}
-	
-	public void runExperiment()
+	public static void runExperiment()
 	{
 		/*
 		 * Main Experimenter. This method does the follows.
@@ -73,10 +34,11 @@ public class MemoryBasedExperimenter {
 		 * 		2.3) Write prediction to File
 		 */
 		
+		String testFile = CollaborativeFilteringMain.params.get("testFile");
 		try {
 			BufferedReader reader;
 			System.out.println("Staring Experiment");
-			reader = new BufferedReader(new FileReader(this.ipFile));
+			reader = new BufferedReader(new FileReader(testFile));
 			
 			/*
 			 * Read each line and build the Item-User  matrix 
@@ -92,15 +54,13 @@ public class MemoryBasedExperimenter {
 					int user =  Integer.parseInt(items[1]);
 					//int rating = Integer.parseInt(items[2]);
 					
-					// Set the corresponding user-item entry in the matrix
-					TreeMap<Integer,Vector> topKProfiles;
-					
+					// Get top K profiles for the given user
+					int K = Integer.parseInt(CollaborativeFilteringMain.params.get("K"));
+					LinkedHashMap<Integer,Vector> topKProfiles =  KSimilarUsersComputer.getKTopProfiles(user,K);
 					
 				}
 				
-				/*
-				 * Perform imputation. To handle missing values and zero computation in the dot Product.
-				 */
+				
 				
 			} catch (IOException e) {
 				// TODO Auto-generated catch block

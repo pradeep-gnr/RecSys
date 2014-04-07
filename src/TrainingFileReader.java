@@ -183,9 +183,10 @@ public class TrainingFileReader {
 		 * Test the Matrix !!
 		 */
 		
-		TrainingFileReader r = new TrainingFileReader("/home/pradeep/courses/IR/HW4/HW3_data/train.csv");
+		TrainingFileReader r = new TrainingFileReader("/home/pradeep/courses/IR/HW4/HW3_data/smallTrain.csv");
 		r.processTrainingFile();		
 		System.out.println("Built a Matrix");
+		MatrixHelper.printMatrix(r.userItemMatrix);
 		
 	}
 

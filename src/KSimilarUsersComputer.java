@@ -1,9 +1,14 @@
 
 import java.util.TreeMap;
+
 import Jama.Matrix;
+
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedHashMap;
+
 import org.apache.commons.lang3.ArrayUtils;
+
 import java.util.ArrayList;
 
 
@@ -53,7 +58,24 @@ public class KSimilarUsersComputer {
 		for(int i=0;i<array.length;i++)
 			System.out.println(array[i]);
 	}
-	public static TreeMap<Integer,Vector> getKTopProfiles(int userId, int K)
+	
+	public static ArrayList<ValueIndexPair> getValuePairList(Vector userSimilarityVector)
+	{
+		/*
+		 * Takes a vector of similarity scores of a user i with all users in the corpora and converts each
+		 * entry into an value index pair entry
+		 */
+		ArrayList<ValueIndexPair> userSimilarityList = new ArrayList<ValueIndexPair>();
+		
+		for(int i=0;i<userSimilarityVector.elements.length;i++)
+		{
+			userSimilarityList.add(new ValueIndexPair(i,userSimilarityVector.elements[i] ));
+		}		
+		return userSimilarityList;
+		
+	}
+	
+	public static LinkedHashMap<Integer,Vector> getKTopProfiles(int userId, int K)
 	{
 		/*
 		 * This method does the following.
@@ -64,33 +86,36 @@ public class KSimilarUsersComputer {
 		 */
 		
 		try {
-			Vector userSimilarityVector = MatrixHelper.fetchIthRow(MemoryBasedExperimenter.userSimMatrix, userId);
+			Vector userSimilarityVector = MatrixHelper.fetchIthRow(CollaborativeFilteringMain.userSimMatrix, userId);
 			ArrayList<ValueIndexPair> userSimilarityList = getValuePairList(userSimilarityVector);
 			
 			Collections.sort(userSimilarityList);
-			ArrayList<Integer> userIndexList = new ArrayList<Integer>();
-			TreeMap<Integer,Vector> resultMap = new TreeMap<Integer,Vector>();
+			//ArrayList<Integer> userIndexList = new ArrayList<Integer>();
+			LinkedHashMap<Integer,Vector> resultMap = new LinkedHashMap<Integer,Vector>();	
+			int maxSize=K;
 			
 			for(int i=0;i<userSimilarityList.size();i++)
 			{
-				if(i<K)
+				if(resultMap.size()<=maxSize)
 				{
 					int curUserIndex = userSimilarityList.get(i).index; // For the ith top user in K most similar users
-					Vector curUserProfile = MatrixHelper.fetchIthRow(MemoryBasedExperimenter.userSimMatrix, curUserIndex ); // The profile of the current user
-					resultMap.put(curUserIndex,curUserProfile);					
+					Vector curUserProfile = MatrixHelper.fetchIthRow(CollaborativeFilteringMain.userItemMatrix, curUserIndex ); // The profile of the current user
+					
+					if(curUserIndex!=userId)
+						resultMap.put(curUserIndex,curUserProfile);					
 				}
 				else
 					break;
 			}
-					
+
+			System.out.println(userId + "  "+ resultMap.toString());
 			return resultMap;	
 		} catch (RowOutOfBoundsException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return null;
 		}
-		
-		
-		
+
 	}
 	
 	public static void main(String args[])
@@ -99,7 +124,7 @@ public class KSimilarUsersComputer {
 		 * Some testing
 		 */
 		double[] myIntArray = new double[]{1,2,3};		
-		System.out.println(Arrays.toString(getIndices(myIntArray)));
+		//System.out.println(Arrays.toString(getIndices(myIntArray)));
 	}
 
 }
