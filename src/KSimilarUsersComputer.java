@@ -96,7 +96,7 @@ public class KSimilarUsersComputer {
 			
 			for(int i=0;i<userSimilarityList.size();i++)
 			{
-				if(resultMap.size()<=maxSize)
+				if(resultMap.size()<maxSize)
 				{
 					int curUserIndex = userSimilarityList.get(i).index; // For the ith top user in K most similar users
 					Vector curUserProfile = MatrixHelper.fetchIthRow(CollaborativeFilteringMain.userItemMatrix, curUserIndex ); // The profile of the current user

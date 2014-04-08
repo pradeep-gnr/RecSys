@@ -19,14 +19,20 @@ public class CollaborativeFilteringMain {
 	public static HashMap<String,String> params;
 	public static Matrix userItemMatrix;
 	public static Matrix userSimMatrix;
+	public static HashMap<Integer,Boolean> userCheckMap; // List of users in the training corpus.
+	public static HashMap<Integer,Boolean> itemCheckMap; //List of items in the training corpus.
 	
+	static{
+		userCheckMap = new HashMap<Integer,Boolean>();
+		 itemCheckMap = new HashMap<Integer,Boolean>();
+	}
 	public void CollaborativeFilteringMain()
 	{
 		/*
 		 * Construtor
 		 */
 		userItemMatrix = null;
-		userSimMatrix=null;
+		userSimMatrix=null;		
 	}
 	
 	public static void runMemoryBasedExperiment()
@@ -101,7 +107,8 @@ public class CollaborativeFilteringMain {
 			
 			//MatrixHelper.printMatrix(test.userSimMatrix);
 			// Write the Matrix to File
-			MatrixHelper.writeMatrixToFile(test.userSimMatrix, userSimilarityMatrixFile );			
+			MatrixHelper.writeMatrixToFile(test.userSimMatrix, userSimilarityMatrixFile );	
+			userSimMatrix = test.userSimMatrix;
 			}
 		
 		/*
@@ -109,7 +116,12 @@ public class CollaborativeFilteringMain {
 		 */	
 		//MatrixHelper.printMatrix(userItemMatrix);
 		//MatrixHelper.printMatrix(userSimMatrix);
-		MemoryBasedExperimenter.runExperiment();
+		try {
+			MemoryBasedExperimenter.runExperiment();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		
 	}

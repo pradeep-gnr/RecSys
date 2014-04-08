@@ -16,8 +16,12 @@ public class SimilarityComputer {
 		double aNorm = getVectorNorm(a);
 		double bNorm = getVectorNorm(b);
 		
-		double cosSim = (dotProd) / (aNorm*bNorm);
-		return cosSim;		
+		if(aNorm==0||bNorm==0)
+			return 0;
+		
+		double cosSim = (dotProd) / (aNorm*bNorm);				
+		return cosSim;
+		
 		
 	}
 	
@@ -67,8 +71,8 @@ public class SimilarityComputer {
 		/*
 		 * Test dot product computation !
 		 */
-		Vector a = new Vector(new double[]{1,2,3});
-		Vector b = new Vector(new double[]{-1,-2,-3});
+		Vector a = new Vector(new double[]{0,3,1});
+		Vector b = new Vector(new double[]{0,1,0});
 		try {
 			System.out.println(getDotProduct(a, b));
 		} catch (DimensionMismatchException e) {

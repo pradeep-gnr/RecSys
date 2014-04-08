@@ -32,10 +32,12 @@ public class UserSimilarityMatrixGenerator {
 		Vector userJ;
 		for(int i=0;i<this.dim;i++)
 			for(int j=i;j<this.dim;j++)
+				
 			{
 				/*
 				 *  Compute similarity sim(u(i), u(j))
 				 */
+				
 				System.out.println(i+"  "+j);
 				try {
 					userI = MatrixHelper.fetchIthRow(userItemMatrix,i);

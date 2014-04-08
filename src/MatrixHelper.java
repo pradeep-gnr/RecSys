@@ -38,6 +38,85 @@ public class MatrixHelper {
 		return new Vector(rowElements);
 	}
 	
+	static Vector fetchIthColumn(Matrix matrix, int colId) throws ColumnOutOfBoundsException
+	{
+		/*
+		 * Fetch the ith Column in a matrix
+		 * @matrix 
+		 * @colId - the ith row to fetch
+		 * @return - returns the column in vector Format
+		 */
+		
+		int maxRowLen = matrix.getRowDimension();
+		int maxColLen = matrix.getColumnDimension();
+		double[] colElements = new double[maxRowLen];
+		if(colId>maxColLen-1)
+		{
+			throw new ColumnOutOfBoundsException("ColId exceeds the total number of columns in the matrix.");
+		}
+		
+		else
+		{
+			for(int i=0;i<maxRowLen;i++)
+			{
+				colElements[i] = matrix.get(i,colId);
+			}
+		}
+		
+		return new Vector(colElements);
+	}
+	
+	static double computeAverageinRow(Matrix matrix , int rowId)  throws RowOutOfBoundsException
+	{
+		/*
+		 * Computes the average value of the elements in the iTh row.
+		 */
+		int maxRowLen = matrix.getRowDimension();
+		int maxColLen = matrix.getColumnDimension();
+		
+		if(rowId>maxRowLen-1)
+		{
+			throw new RowOutOfBoundsException("Row id exceeds total number of rows in the matrix");
+		}
+		
+		else
+		{
+			double totalSum=0;
+			for(int j=0;j<maxColLen;j++)
+			{
+				totalSum = totalSum+ matrix.get(rowId,j);
+			}
+			
+			return totalSum/maxColLen;
+		}
+	}
+	
+	static double computeAverageinColumn(Matrix matrix, int colId) throws ColumnOutOfBoundsException
+	{
+		/*
+		 * Computes the average of the elements in the ith column.
+		 */
+		int maxRowLen = matrix.getRowDimension();
+		int maxColLen = matrix.getColumnDimension();
+		
+		if(colId>maxColLen-1)
+		{
+			throw new ColumnOutOfBoundsException("ColId exceeds the total number of columns in the matrix.");
+		}
+		
+		else
+		{
+			double totalSum=0;
+			for(int i=0;i<maxRowLen;i++)
+			{
+				totalSum = totalSum + matrix.get(i,colId);
+			}
+			//System.out.println(totalSum);
+			//System.out.println(maxRowLen);
+			return totalSum/maxRowLen;
+		}
+	}
+		
 	static void printMatrix(Matrix matrix) 
 	{
 		/*
@@ -64,7 +143,8 @@ public class MatrixHelper {
 			for(int j=0;j<matrix.getColumnDimension();j++)
 			{
 				double curValue = matrix.get(i,j);
-				matrix.set(i, j, curValue-num);
+				if(curValue!=0)
+					matrix.set(i, j, curValue-num);
 				//System.out.print(matrix.get(i, j)+ " ");
 			}
 			//System.out.println("");

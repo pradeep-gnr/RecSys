@@ -153,7 +153,15 @@ public class TrainingFileReader {
 					int user =  Integer.parseInt(items[1]);
 					int rating = Integer.parseInt(items[2]);
 					
-					// Set the corresponding user-item entry in the matrix					
+					// Set the corresponding user-item entry in the matrix	
+					
+					if(!CollaborativeFilteringMain.userCheckMap.containsKey(user))
+						CollaborativeFilteringMain.userCheckMap.put(user, true);
+					
+					if(!CollaborativeFilteringMain.itemCheckMap.containsKey(item))
+						CollaborativeFilteringMain.itemCheckMap.put(item, true);
+					
+						
 					userItemMatrix.set(user,item,rating);					
 				}
 				
