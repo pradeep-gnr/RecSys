@@ -71,8 +71,8 @@ public class SimilarityComputer {
 		/*
 		 * Test dot product computation !
 		 */
-		Vector a = new Vector(new double[]{0,3,1});
-		Vector b = new Vector(new double[]{0,1,0});
+		Vector a = new Vector(new double[]{-0.5345224838248488,0.8017837257372732,-0.2672612419124244,0.0,0.0});
+		Vector b = new Vector(new double[]{0.0,0.0,0.0,0.0,0.0});
 		try {
 			System.out.println(getDotProduct(a, b));
 		} catch (DimensionMismatchException e) {

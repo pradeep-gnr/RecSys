@@ -37,6 +37,8 @@ public class TrainingFileReader {
 	
 	private String ipFile;		//The input File	
 	public Matrix userItemMatrix; // The user Item matrix 
+	public HashMap<Integer,HashMap<String,Double>> userMeanVarianceMap;
+	//public Matrix origUserItemMatrix; // To keep track of it before standardization.
 	
 	public TrainingFileReader(String fileName)
 	{
@@ -45,7 +47,7 @@ public class TrainingFileReader {
 		 */
 		ipFile = fileName;		
 		
-	}
+	}	
 	
 	public MatrixDimensions fetchUserItemMatrixDimensions()
 	{
@@ -59,6 +61,7 @@ public class TrainingFileReader {
 		BufferedReader reader;
 		HashMap<Integer,Boolean> itemCheckMap = new HashMap<Integer,Boolean>(); 
 		HashMap<Integer,Boolean> userCheckMap = new HashMap<Integer,Boolean>();
+		
 		
 		int userCount = 0;
 		int itemCount = 0;
@@ -134,6 +137,7 @@ public class TrainingFileReader {
 		MatrixDimensions matrixDimensions = fetchUserItemMatrixDimensions();
 		matrixDimensions.printDimensions();
 		userItemMatrix = new Matrix(matrixDimensions.rowLen+1, matrixDimensions.colLen+1); // An Empty matrix of zeros
+		userMeanVarianceMap = new HashMap<Integer,HashMap<String,Double>>();
 		
 		try {
 			System.out.println("Building a Matrix");
@@ -169,6 +173,48 @@ public class TrainingFileReader {
 				 * Perform imputation. To handle missing values and zero computation in the dot Product.
 				 */
 				userItemMatrix = MatrixHelper.getSubtractedMatrix(userItemMatrix, 3);
+				
+			//	MatrixHelper.printMatrix(userItemMatrix);
+				
+				/*
+				 * 
+				 */				
+				
+				if(CollaborativeFilteringMain.params.get("Standardization").equals("yes"))
+				{
+				
+					System.out.println("Standardizing results");
+					int maxRowLen = userItemMatrix.getRowDimension();
+				//	origUserItemMatrix = MatrixHelper.cloneMatrix(userItemMatrix);
+					for(int i=0;i<maxRowLen;i++)
+					{
+						try {
+							Vector curVector = MatrixHelper.fetchIthRow(userItemMatrix, i);
+							double mean = VectorOperations.getVectorMean(curVector);
+							double variance = VectorOperations.getVectorVariance(curVector);
+							
+							// standardize vector
+							Vector stdVector = VectorOperations.standardizeVector(curVector);
+							
+							// Set the corresponding row.
+							userItemMatrix = MatrixHelper.setIthRow(userItemMatrix, i, stdVector);	
+							/*
+							 * 
+							 */
+							HashMap<String,Double> meanVarMap = new HashMap<String,Double>();
+							meanVarMap.put("mean", mean);
+							meanVarMap.put("variance",variance);
+							
+							userMeanVarianceMap.put(i,meanVarMap);
+							
+						} catch (RowOutOfBoundsException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}						
+					}
+					
+				}
+				
 				
 			} catch (IOException e) {
 				// TODO Auto-generated catch block

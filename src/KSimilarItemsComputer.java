@@ -12,13 +12,13 @@ import org.apache.commons.lang3.ArrayUtils;
 import java.util.ArrayList;
 
 
-public class KSimilarUsersComputer {
+public class KSimilarItemsComputer {
 	/*
 	 * Computes K-nearest neighbors of a given user. In this case, we assume that pairwise similariy measures
 	 * between all pairs of users have been computed.  
 	 */
 	
-	public KSimilarUsersComputer()
+	public KSimilarItemsComputer()
 	{
 		/*
 		 * Initialize the constructor
@@ -75,7 +75,7 @@ public class KSimilarUsersComputer {
 		
 	}
 	
-	public static LinkedHashMap<Integer,Vector> getKTopProfiles(int userId, int K)
+	public static LinkedHashMap<Integer,Vector> getKTopProfiles(int itemId, int K)
 	{
 		/*
 		 * This method does the following.
@@ -86,33 +86,24 @@ public class KSimilarUsersComputer {
 		 */
 		
 		try {
-			Vector userSimilarityVector = MatrixHelper.fetchIthRow(CollaborativeFilteringMain.userSimMatrix, userId);
-			ArrayList<ValueIndexPair> userSimilarityList = getValuePairList(userSimilarityVector);
+			Vector itemSimilarityVector = MatrixHelper.fetchIthRow(CollaborativeFilteringMain.itemSimMatrix, itemId);
+			ArrayList<ValueIndexPair> itemSimilarityList = getValuePairList(itemSimilarityVector);
 			
-			Collections.sort(userSimilarityList);
+			Collections.sort(itemSimilarityList);
 			//ArrayList<Integer> userIndexList = new ArrayList<Integer>();
 			LinkedHashMap<Integer,Vector> resultMap = new LinkedHashMap<Integer,Vector>();	
 			int maxSize=K;
 			
-			for(int i=0;i<userSimilarityList.size();i++)
+			for(int i=0;i<itemSimilarityList.size();i++)
 			{
 				if(resultMap.size()<maxSize)
 				{
+					int curItemIndex = itemSimilarityList.get(i).index; // For the ith top user in K most similar users
+					System.out.println(curItemIndex);
+					Vector curItemProfile = MatrixHelper.fetchIthRow(CollaborativeFilteringMain.itemUserMatrix, curItemIndex ); // The profile of the current user
 					
-					int curUserIndex = userSimilarityList.get(i).index; // For the ith top user in K most similar users
-					//System.out.println(curUserIndex);
-					Vector curUserProfile = MatrixHelper.fetchIthRow(CollaborativeFilteringMain.userItemMatrix, curUserIndex ); // The profile of the current user
-					
-					if(CollaborativeFilteringMain.params.get("Standardization").equals("yes"))
-					{
-						double curMean = CollaborativeFilteringMain.userMeanVarianceMap.get(curUserIndex).get("mean");
-						double curVariance = CollaborativeFilteringMain.userMeanVarianceMap.get(curUserIndex).get("variance");
-						
-						curUserProfile = VectorOperations.reStandardizeVector(curMean, curVariance, curUserProfile);						 
-					}
-					
-					if(curUserIndex!=userId)
-						resultMap.put(curUserIndex,curUserProfile);					
+					if(curItemIndex!=itemId)
+						resultMap.put(curItemIndex,curItemProfile);					
 				}
 				else
 					break;

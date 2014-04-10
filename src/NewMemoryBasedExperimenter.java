@@ -13,29 +13,28 @@ import java.io.Serializable;
 import java.util.TreeMap;
 import java.util.LinkedHashMap;
 import java.io.File;
-public class MemoryBasedExperimenter {
+public class NewMemoryBasedExperimenter {
 	/*
-	 * Experiments for memory based collaborative Filtering 
+	 * Experiments for model based collaborative Filtering 
 	 */	
 	
-	public MemoryBasedExperimenter()
+	public NewMemoryBasedExperimenter()
 	{
 		/*
 		 * Initialize Constructor
-		 */		
+		 */
+		
 	}
 	
 	public static void runExperiment() throws IOException
 	{
 		/*
-		 * Lazy learner. Memory based experimenter.
-		 * This method does the following.
-		 * 1) Read a test file
-		 * 2) Read each line, for each user, compute K-nearest neighbors
-		 * 		2.1) If a user, item is not in training data, then do error handling.
-		 * 		
-		 * 3) Compute weighted/normal mean for the K-nearest neighbors
-		 * 
+		 * Main Experimenter. This method does the follows.
+		 * 1) Load from a file the pre-computed user-user similarity ratings.
+		 * 2) Read a testing/file line by line in MovieId, userId format, compute predictions for each movieId, userId pair.
+		 * 		2.1) Generate K-Most similar users for the corresponding user
+		 * 		2.2) User mean/weighted Mean to generate movie ratings.
+		 * 		2.3) Write prediction to File
 		 */
 		
 		String testFile = CollaborativeFilteringMain.params.get("testFile");
@@ -51,8 +50,8 @@ public class MemoryBasedExperimenter {
 			 * Read each line and build the Item-User  matrix 
 			 */
 			String line;
+			int k=0;
 			try {
-				int k=0;
 				while ((line = reader.readLine()) != null) {
 					
 					line = line.trim();
@@ -120,21 +119,19 @@ public class MemoryBasedExperimenter {
 					if(ratingSet==false)
 					{
 					int K = Integer.parseInt(CollaborativeFilteringMain.params.get("K"));
+					LinkedHashMap<Integer,Vector> topKProfiles =  KSimilarUsersComputer.getKTopProfiles(user,K);
 					
-					/*
-					 * For a given user, iterate through all users and get all similarity scores.
-					 */
-					SimilarUserMetrics profileMetrics =  LazyKSimilarUsersComputer.getKTopProfiles(user,K);	
-					//System.out.println(topKProfiles);
-					rating = MemoryRatingPredictor.predictRating(profileMetrics.resultMap, profileMetrics.userSimilarityMap,item, user);
+					rating = RatingPredictor.predictRating(topKProfiles, item, user);
 					}
 					/*
 					 * Write the predictions to file.
 					 */
 					//int rat = (Integer) rating;
-					System.out.println(k+"  "+rating);					
-					bw.write(rating+"\n");
+					System.out.println(k +"  " +rating);	
 					k+=1;
+					String ratStr= String.valueOf(rating);
+					String[] ratStrComp = ratStr.split("\\.");
+					bw.write(ratStrComp[0]+"\n");
 				}				
 				
 			} catch (IOException e) {

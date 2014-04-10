@@ -11,6 +11,51 @@ public class MatrixHelper {
 	 * Helper functions for matrix utilities 
 	 */
 	
+	static Matrix setIthRow(Matrix matrix, int rowId, Vector vector) throws RowOutOfBoundsException
+	{
+		/*
+		 * Set the ith row in the matrix. 
+		 */
+		
+		if(vector.elements.length!=matrix.getColumnDimension())
+		{
+			/*
+			 * Unequal dimensions between target vector and corresponding row in the matrix.
+			 */
+		}
+		
+		for(int j=0;j<vector.elements.length;j++)
+		{
+			double element = vector.elements[j];
+			matrix.set(rowId,j,element);
+		}
+		
+		return matrix;		
+	}
+	
+	public static Matrix cloneMatrix(Matrix curMatrix)
+	{
+		/*
+		 * Clones the current matrix and returns a new copy.		 *  
+		 */
+		
+		int rowSize = curMatrix.getRowDimension();
+		int colSize = curMatrix.getColumnDimension();
+		
+		Matrix copyMatrix = new Matrix(rowSize, colSize); // An Empty matrix of zeros
+		
+		/*
+		 * Copy each element
+		 */
+		for(int i=0;i<rowSize;i++)
+			for(int j=0;j<colSize;j++)
+			{
+				double value = curMatrix.get(i, j);
+				copyMatrix.set(i, j, value);
+			}
+		return copyMatrix;
+	}
+	
 	static Vector fetchIthRow(Matrix matrix, int rowId) throws RowOutOfBoundsException
 	{
 		/*
@@ -174,6 +219,51 @@ public class MatrixHelper {
 			e.printStackTrace();
 		}
 		   
+	}
+	
+	static int countInMatrix(Matrix matrix,int element)
+	{
+		/*
+		 * Count the number of occurences of a certain element in the matrix.
+		 */
+		int maxRowLen = matrix.getRowDimension();
+		int maxColLen = matrix.getColumnDimension();
+		int count=0;
+		for(int i=0;i<matrix.getRowDimension();i++)
+		{
+			for(int j=0;j<matrix.getColumnDimension();j++)
+			{
+				double curValue = matrix.get(i,j);
+				if(curValue==element)
+					count+=1;
+				//System.out.print(matrix.get(i, j)+ " ");
+			}
+			//System.out.println("");
+		}
+		return count;
+	}
+	
+	static int getAverageValue(Matrix matrix)
+	{
+		/*
+		 * Count the number of occurences of a certain element in the matrix.
+		 */
+		int maxRowLen = matrix.getRowDimension();
+		int maxColLen = matrix.getColumnDimension();
+		int count=0;
+		int totalSum=0;
+		for(int i=0;i<matrix.getRowDimension();i++)
+		{
+			for(int j=0;j<matrix.getColumnDimension();j++)
+			{
+				double curValue = matrix.get(i,j);
+				count+=1;
+				totalSum+=curValue;
+				//System.out.print(matrix.get(i, j)+ " ");
+			}
+			//System.out.println("");
+		}
+		return totalSum/count;
 	}
 
 }

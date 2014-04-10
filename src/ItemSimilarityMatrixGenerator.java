@@ -2,34 +2,34 @@ import java.lang.Math;
 
 import Jama.Matrix;
 
-public class UserSimilarityMatrixGenerator {
+public class ItemSimilarityMatrixGenerator {
 	
 	/*
 	 * Computes similarity matrix for all users based on their profiles.
 	 */
-	public Matrix userSimMatrix;
-	public Matrix userItemMatrix;
+	public Matrix itemSimMatrix;
+	public Matrix itemUserMatrix;
 	public int dim;
 	
-	public UserSimilarityMatrixGenerator(Matrix userItemMatrix)
+	public ItemSimilarityMatrixGenerator(Matrix itemUserMatrix)
 	{
 		/*
 		 * Initialize the dimension of the User Similarity matrix 
 		 */
-		this.dim = userItemMatrix.getRowDimension();
-		userSimMatrix = new Matrix(dim,dim); // Initialize the similarity matrix
-		this.userItemMatrix = userItemMatrix;
+		this.dim = itemUserMatrix.getRowDimension();
+		itemSimMatrix = new Matrix(dim,dim); // Initialize the similarity matrix
+		this.itemUserMatrix = itemUserMatrix;
 		
 	}
 	
-	public void generateUserSimilarityMatrix(String simType)
+	public void generateItemSimilarityMatrix(String simType)
 	{
 		/*
 		 * Computes the similarity score for each user pair
 		 * @simType - the type of similarity metric to be used 'dot' for dot product and 'cos' for cosine similarity.		 *  
 		 */
-		Vector userI;
-		Vector userJ;
+		Vector itemI;
+		Vector itemJ;
 		for(int i=0;i<this.dim;i++)
 			for(int j=i;j<this.dim;j++)
 				
@@ -40,8 +40,7 @@ public class UserSimilarityMatrixGenerator {
 				
 				System.out.println(i+"  "+j);
 				try {
-					userI = MatrixHelper.fetchIthRow(userItemMatrix,i);
-					//userI = VectorOperations.standardizeVector(userI);
+					itemI = MatrixHelper.fetchIthRow(itemUserMatrix,i);
 				} catch (RowOutOfBoundsException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -49,8 +48,7 @@ public class UserSimilarityMatrixGenerator {
 					
 				} 
 				try {
-					userJ = MatrixHelper.fetchIthRow(userItemMatrix,j);
-					//userJ = VectorOperations.standardizeVector(userJ);
+					itemJ = MatrixHelper.fetchIthRow(itemUserMatrix,j);
 				} catch (RowOutOfBoundsException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -60,9 +58,9 @@ public class UserSimilarityMatrixGenerator {
 				if(simType.equals("dot"))
 						{
 							try {
-								double simScore = SimilarityComputer.getDotProduct(userI, userJ);
-								userSimMatrix.set(i, j,simScore);								
-								userSimMatrix.set(j,i,simScore);
+								double simScore = SimilarityComputer.getDotProduct(itemI, itemJ);
+								itemSimMatrix.set(i, j,simScore);								
+								itemSimMatrix.set(j,i,simScore);
 							} catch (DimensionMismatchException e) {
 								// TODO Auto-generated catch block
 								
@@ -73,9 +71,9 @@ public class UserSimilarityMatrixGenerator {
 				else
 					{
 					try {						
-						double simScore = SimilarityComputer.getCosineSimilarity(userI, userJ);
-						userSimMatrix.set(i, j,simScore);
-						userSimMatrix.set(j, i,simScore);
+						double simScore = SimilarityComputer.getCosineSimilarity(itemI, itemJ);
+						itemSimMatrix.set(i, j,simScore);
+						itemSimMatrix.set(j, i,simScore);
 						//System.out.println(SimilarityComputer.getCosineSimilarity(userI, userJ));
 						} catch (DimensionMismatchException e) {
 						// TODO Auto-generated catch block
@@ -100,13 +98,13 @@ public class UserSimilarityMatrixGenerator {
 		double[][] array = {{1,2,3},{-1,-2,-3},{8,11,13}};
 		Matrix A = new Matrix(array);
 		A = MatrixHelper.getSubtractedMatrix(A, 3);
-		//UserSimilarityMatrixGenerator test = new UserSimilarityMatrixGenerator(r.userItemMatrix);			
-		UserSimilarityMatrixGenerator test = new UserSimilarityMatrixGenerator(A);
-		test.generateUserSimilarityMatrix("cos");
+		//UserSimilarityMatrixGenerator test = new UserSimilarityMatrixGenerator(r.itemUserMatrix);			
+		ItemSimilarityMatrixGenerator test = new ItemSimilarityMatrixGenerator(A);
+	//	test.generateUserSimilarityMatrix("cos");
 		
 		MatrixHelper.printMatrix(A);
-		MatrixHelper.printMatrix(test.userSimMatrix);
-		//MatrixHelper.writeMatrixToFile(test.userSimMatrix, "/home/pradeep/matrix.ser");
+		MatrixHelper.printMatrix(test.itemUserMatrix);
+		//MatrixHelper.writeMatrixToFile(test.itemUserMatrix, "/home/pradeep/matrix.ser");
 		System.out.println("Written to File");
 		
 	}
